@@ -1,0 +1,30 @@
+{
+  "$schema": "./node_modules/remix/schema/remix.json",
+  "assets": {
+    "basePath": "/assets",
+    "rootDir": "../..",
+    "mounts": {
+      "app": "apps/remix/app",
+      "npm": "node_modules"
+    },
+    "allowFiles": [
+      "apps/remix/app/assets/**",
+      "apps/remix/app/utils/frame-mutation.ts",
+      "apps/remix/app/routes.ts",
+      "apps/remix/app/ui/document.css"
+    ],
+    "allowPackages": ["remix", "@remix-run/ui"],
+    "denyFiles": ["**/*.test.*", "apps/remix/app/**/*.server.*", "**/.env*", "**/*secret*"]
+  },
+  "test": {
+    "files": ["test/**/*.test{,.browser,.e2e}.{ts,tsx}"],
+    "browserFiles": ["test/**/*.test.browser.{ts,tsx}"],
+    "e2eFiles": ["test/**/*.test.e2e.{ts,tsx}"],
+    "exclude": ["../../node_modules/**", "node_modules/**"],
+    "coverage": {
+      "enabled": false,
+      "include": ["app/**/*.{ts,tsx}", "worker.ts"],
+      "exclude": ["**/*.test.{ts,tsx}"]
+    }
+  }
+}

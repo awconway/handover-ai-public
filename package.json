@@ -1,0 +1,24 @@
+{
+  "name": "handover-ai-clinical-registry",
+  "private": true,
+  "version": "0.2.0",
+  "type": "module",
+  "packageManager": "pnpm@11.6.0",
+  "scripts": {
+    "dev": "concurrently -n remix,jobs,dspy,privacy -c blue,yellow,magenta,green \"pnpm --filter @handover/remix dev\" \"pnpm --filter @handover/remix worker:watch\" \"pnpm dev:dspy\" \"pnpm dev:privacy\"",
+    "dev:dspy": "sh -lc 'cd apps/worker && set -a && . ../../.env && set +a && uv run python -m uvicorn handover_prod.app:app --host 127.0.0.1 --port 8000 --reload'",
+    "dev:privacy": "test -f .env.local-privacy || { echo 'Copy .env.local-privacy.example to .env.local-privacy first.' >&2; exit 1; }; env -i HOME=\"$HOME\" PATH=\"$PATH\" TMPDIR=\"${TMPDIR:-/tmp}\" LOCAL_PRIVACY_ENV_FILE=\"$PWD/.env.local-privacy\" LOCAL_PRIVACY_APP_DIR=\"$PWD/apps/local-privacy\" sh -c 'set -a; . \"$LOCAL_PRIVACY_ENV_FILE\"; set +a; cd \"$LOCAL_PRIVACY_APP_DIR\"; export PATH=\"$LOCAL_PRIVACY_APP_DIR/.venv/bin:$PATH\"; exec .venv/bin/handover-local-privacy'",
+    "dev:local-first": "pnpm dev",
+    "build": "pnpm --filter @handover/remix typecheck",
+    "start": "pnpm --filter @handover/remix start",
+    "migrate": "pnpm --filter @handover/remix migrate",
+    "worker:jobs": "pnpm --filter @handover/remix worker",
+    "test": "pnpm --filter @handover/remix test",
+    "lint": "pnpm --filter @handover/remix typecheck && pnpm --filter @handover/remix doctor",
+    "report:usability": "pnpm --filter @handover/remix report:usability"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.3"
+  },
+  "license": "MIT"
+}

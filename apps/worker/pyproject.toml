@@ -1,0 +1,18 @@
+[project]
+name = "handover-prod"
+version = "0.1.0"
+description = "Standalone FastAPI service for compiled handover DSPy programs"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "dspy==3.0.4",
+    "fastapi>=0.115.0",
+    "typing-extensions>=4.12.0",
+    "uvicorn[standard]>=0.35.0",
+]
+
+[project.scripts]
+handover-prod = "handover_prod.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

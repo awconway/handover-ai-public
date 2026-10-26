@@ -1,0 +1,26 @@
+{
+  "traces": [],
+  "train": [],
+  "demos": [],
+  "signature": {
+    "instructions": "text\nTask: Extract “unknown fact” statements from a clinical bedside handover transcript.\n\nYou will be given:\n- A single field called `text` containing a transcript with speaker tags (e.g., [OUTGOING_NURSE], [INCOMING_NURSE], [PATIENT], [AMBULANCE OFFICER], [ED NURSE], etc.).\n\nWhat to extract (strict definition):\n- Extract ONLY statements where a speaker EXPLICITLY states lack of knowledge / uncertainty / inability to confirm or recall a specific fact.\n- The extracted quote MUST contain an explicit uncertainty marker (non-exhaustive examples):\n  - “I don’t know …”\n  - “don’t know …”\n  - “not sure …”\n  - “unsure …”\n  - “unknown …”\n  - “unable to confirm …”\n  - “can’t confirm …”\n  - “I can’t recall …”\n  - “cannot recall …”\n  - “not aware …”\n- If the transcript has no such explicit uncertainty statements, output [].\n\nWhat NOT to extract (common pitfalls to avoid):\n- Do NOT infer uncertainty from hedges/softeners alone: “I think…”, “I guess…”, “probably…”, “nothing definitive yet…”, “may need…”, “pending…”, “awaiting results…”.\n  - Example pitfall: “I don't think he’s been taking it” is NOT an “unknown fact” under this strict task (it is a belief/hedge, not an explicit “I don’t know/not sure/unsure” statement).\n- Do NOT extract patient hedges framed as ordinary clinical statements such as “None that I know of” / “No allergies that I know of” (these are not staff explicitly stating missing knowledge).\n- Do NOT extract generic closers like “That’s all I can tell you for now” unless they include an explicit unknown marker tied to a specific fact.\n- Do NOT extract “pending/awaiting” language unless an explicit “not sure/unknown/unable to confirm/can’t recall/don’t know” appears in the same extracted span.\n\nSpan/quote extraction rules (verbatim + tight boundaries):\n- Extract ONLY from the provided transcript text; do not add, rewrite, normalize, or “correct” punctuation/grammar.\n- Return the tightest possible verbatim clause/sentence that includes:\n  1) the explicit uncertainty marker, AND\n  2) the direct object/complement (what is unknown).\n- Exclude unrelated lead-in or follow-up context even if in the same line.\n  - Example: “Bloods and observations were taken but not sure on progress” → extract only “not sure on progress”.\n- Do not stitch together fragments from different parts of the transcript.\n- Each distinct unknown-fact statement should be its own separate quote (no merging across distant lines).\n\nOutput format (must follow exactly):\n- Return a JSON-like list of objects exactly like:\n  [{ \"label\": \"Unknown fact\", \"quote\": \"<EXACT TEXT>\" }, ...]\n- Use the label exactly: \"Unknown fact\"\n- Quotes must match the transcript text exactly (no added trailing punctuation if it isn’t present in the transcript span).\n\nIf none:\n- Return [].",
+    "fields": [
+      {
+        "prefix": "Text:",
+        "description": "${text}"
+      },
+      {
+        "prefix": "Pred Spans:",
+        "description": "${pred_spans}"
+      }
+    ]
+  },
+  "lm": null,
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.12",
+      "dspy": "3.0.4",
+      "cloudpickle": "3.1"
+    }
+  }
+}
